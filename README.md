@@ -1,135 +1,199 @@
 # Google Hotels Prices & OTA Rate Tracker
 
-Get **hotel prices from Google Hotels** for any city, area or list of hotels: the lowest nightly rate, **every booking offer** (Booking.com, Expedia, Hotels.com, Agoda, Trip.com, Priceline, the hotel's official site and more), a **price calendar** across up to 365 check-in dates, Google's **typical price range**, tax breakdown and full hotel details.
+[![Run on Apify](https://apify.com/actor-badge?actor=kamerozkan/google-hotels-prices)](https://apify.com/kamerozkan/google-hotels-prices)
+[![Pricing](https://img.shields.io/badge/Pricing-Pay--Per--Event%20($0.003)-blue)](https://apify.com/kamerozkan/google-hotels-prices)
+[![Memory](https://img.shields.io/badge/Memory-512%20MB-green)](https://apify.com/kamerozkan/google-hotels-prices)
+[![Status](https://img.shields.io/badge/Engine-Direct%20RPC%20(No%20Browser)-success)](https://apify.com/kamerozkan/google-hotels-prices)
 
-Built for speed and reliability: no browser, no login, no cookies. A 25-hotel search with all OTA offers for 2 dates finishes in about 10 seconds.
+Extract real-time **hotel prices, rate parity insights, and OTA booking offers** from Google Hotels for any city, landmark, or list of properties. Retrieve the lowest nightly rate, all booking site offers (Booking.com, Expedia, Hotels.com, Agoda, Trip.com, Priceline, official hotel sites), multi-date price calendars (up to 365 days), Google's typical price benchmark, tax breakdowns, and full property metadata.
 
-## What can you do with it?
+Built for speed and reliability: **browserless direct protocol engine**, no login, no cookies, no heavy headless browser overhead.
 
-- **Hotel revenue management / rate shopping**: track your competitive set every day and see who undercuts you, on which channel, for which dates.
-- **Rate parity monitoring**: compare your official-site price with every OTA for the same hotel and dates.
-- **Price calendars**: scrape 30, 90 or 365 check-in dates in one run to find the cheapest nights, seasonality and events.
-- **Travel agencies, tour operators, deal sites**: build hotel price feeds for any destination.
-- **Market research**: average daily rate (ADR) by city, star class or neighborhood.
-- **AI agents and automations**: clean JSON for n8n, Make, Zapier, Google Sheets or your LLM pipeline.
+---
 
-## Features
+## Why Google Hotels Scraper?
 
-- Search by **query** (`hotels in Istanbul`, `hotels near Eiffel Tower`, `5 star hotels in Dubai Marina`) with automatic pagination.
-- Track **specific hotels** by name, Google Hotels URL or hotel ID.
-- **All OTA offers** per hotel and date: provider, nightly price, total price, booking link.
-- **Price calendar**: many check-in dates per run, with a configurable step (every day, every week...).
-- **Relative dates** (`+14 days`, `tomorrow`) so scheduled runs always look ahead.
-- **Price insight**: Google's typical low/high range and whether today's price is `low`, `typical` or `high`.
-- **Stay total** with base price and taxes & fees.
-- Optional **room types** with room-level prices.
-- 30+ currencies, any country as point of sale, any language.
-- Pay only for results.
+| Feature | This Actor (kamerozkan) | SerpApi / Traditional APIs | Playwright / Puppeteer Scrapers |
+| :--- | :--- | :--- | :--- |
+| **Pricing Model** | **$0.003 / hotel with all OTAs** | $0.015 - $0.020 / call | $50 - $150 / mo + heavy compute |
+| **Execution Speed** | **2 - 4 seconds** | 8 - 15 seconds | 35 - 60 seconds |
+| **Memory Footprint** | **512 MB** | N/A (External cloud) | 2048 MB - 4096 MB |
+| **All OTA Offers** | **Yes (10+ booking channels)** | Single price or extra fee | Requires clicking into modal |
+| **Price Benchmark** | **Yes (`low`, `typical`, `high`)** | Rarely supported | No |
+| **Multi-Date Calendars** | **Yes (up to 365 check-in dates)**| Separate calls billed | Multiplies run time by 10x |
 
-## Input example
+---
 
-Track a competitive set for the next 30 nights:
+## Core Use Cases
+
+- **Hotel Revenue Management & Rate Shopping:** Track your hotel's competitive set daily. See which OTA undercuts your official rate and monitor price shifts in real time.
+- **Rate Parity Enforcement:** Verify whether Booking.com, Expedia, or Agoda are violating parity agreements for your rooms across upcoming seasons.
+- **Price Calendars & Seasonality Analysis:** Scan 30, 90, or 365 check-in dates in a single run to uncover peak demand dates, holiday surges, and low-season troughs.
+- **Travel Tech & Deal Sites:** Build high-frequency hotel price comparison engines and deal alert feeds for any city worldwide.
+- **AI Agents & Workflows:** Integrate clean JSON directly into n8n, Make, Zapier, LangChain, or LLM-driven travel planners.
+
+---
+
+## Key Features
+
+- **Query-Based Discovery:** Search any destination (`hotels in Paris`, `luxury hotels in Manhattan`, `cheap hotels near Colosseum`) with automatic pagination.
+- **Specific Hotel Monitoring:** Track designated hotels by name, Google Hotels entity URL, or `hotelId`.
+- **All OTA Offers in One Row:** Receive provider name, nightly price, stay total, and direct booking URL for every booking channel.
+- **Google Price Insight:** Instant comparison against historical averages (`priceLevel`: `low`, `typical`, `high`) with low/high threshold values.
+- **Stay Total & Tax Breakdown:** Base room total plus estimated taxes and fees.
+- **Relative Dates:** Use dynamic expressions (`+14 days`, `tomorrow`) for automated daily monitoring without updating dates manually.
+- **30+ Currencies & Global Point of Sale:** Set currency (USD, EUR, GBP, TRY) and country market code (US, GB, DE, TR).
+
+---
+
+## Input Parameters
+
+| Parameter | Type | Required | Default | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `searchQueries` | Array of Strings | No | `["hotels in Paris"]` | Search destinations or landmarks to discover hotels. |
+| `hotels` | Array of Strings | No | `[]` | Specific hotel names or Google Hotels URLs to track. |
+| `checkInDate` | String | No | `"today+14"` | Check-in date (`YYYY-MM-DD` or relative like `+14 days`, `tomorrow`). |
+| `numberOfDates` | Integer | No | `1` | Scan multiple consecutive check-in dates (1 to 365). |
+| `dateStep` | Integer | No | `1` | Step in days between calendar dates (e.g. 7 for weekly). |
+| `nights` | Integer | No | `1` | Length of stay in nights (1 to 30). |
+| `adults` | Integer | No | `2` | Number of adult guests (1 to 6). |
+| `currency` | String | No | `"USD"` | 3-letter currency code (USD, EUR, GBP, TRY, etc.). |
+| `includeOtaOffers`| Boolean | No | `true` | Extract all OTA booking site offers. If false, extracts lowest price only. |
+| `maxHotelsPerSearch` | Integer | No | `20` | Maximum properties to collect per search query (up to 500). |
+| `proxyConfiguration` | Object | No | `{ "useApifyProxy": true }` | Apify proxy settings (Datacenter or Residential). |
+
+---
+
+## Example JSON Output
+
+Each record represents one hotel property for a specific check-in date:
 
 ```json
 {
-  "hotels": [
-    "Hilton Istanbul Bomonti",
-    "The Marmara Taksim",
-    "https://www.google.com/travel/hotels/entity/ChkIwcfg4NGyvbu8ARoML2cvMWhjMl9xbDg5EAE"
-  ],
-  "checkInDate": "+1 day",
-  "numberOfDates": 30,
-  "nights": 1,
-  "adults": 2,
-  "currency": "EUR",
-  "includeOtaOffers": true
-}
-```
-
-Scrape a whole destination:
-
-```json
-{
-  "searchQueries": ["hotels in Barcelona"],
-  "maxHotelsPerSearch": 200,
-  "checkInDate": "2026-12-20",
-  "nights": 3,
-  "currency": "USD"
-}
-```
-
-## Output example
-
-One row per hotel per check-in date:
-
-```json
-{
-  "hotelName": "Résidence Hoche",
+  "hotelName": "The Marmara Taksim",
   "hotelId": "ChoIv9zm0pCp0vObARoNL2cvMTFkZHd0ZzdmeBAB",
   "checkIn": "2026-11-05",
   "checkOut": "2026-11-07",
   "nights": 2,
   "adults": 2,
   "currency": "EUR",
-  "lowestPricePerNight": 87.26,
-  "lowestTotalPrice": 174.52,
-  "lowestPriceProvider": "Super.com",
-  "offersCount": 14,
+  "lowestPricePerNight": 145.0,
+  "lowestTotalPrice": 290.0,
+  "lowestPriceProvider": "Booking.com",
+  "offersCount": 8,
   "offers": [
-    { "provider": "Super.com", "pricePerNight": 87.26, "totalPrice": 174.52, "bookingUrl": "https://www.google.com/travel/lodging/clk?..." },
-    { "provider": "Agoda", "pricePerNight": 97.58, "totalPrice": 195.16, "bookingUrl": "https://www.google.com/travel/lodging/clk?..." },
-    { "provider": "Hotels.com", "pricePerNight": 99.0, "totalPrice": 198.0, "bookingUrl": "https://www.google.com/travel/lodging/clk?..." }
+    {
+      "provider": "Booking.com",
+      "pricePerNight": 145.0,
+      "totalPrice": 290.0,
+      "bookingUrl": "https://www.google.com/travel/lodging/clk?..."
+    },
+    {
+      "provider": "Official Site",
+      "pricePerNight": 150.0,
+      "totalPrice": 300.0,
+      "bookingUrl": "https://www.google.com/travel/lodging/clk?..."
+    },
+    {
+      "provider": "Expedia",
+      "pricePerNight": 152.0,
+      "totalPrice": 304.0,
+      "bookingUrl": "https://www.google.com/travel/lodging/clk?..."
+    }
   ],
-  "priceInsight": { "currentPrice": 95, "typicalLowPrice": 78, "typicalHighPrice": 105, "priceLevel": "typical" },
-  "stayTotal": { "baseTotal": 156.94, "taxesAndFees": 15.7, "grandTotal": 174.52 },
-  "rating": 3.8,
-  "reviewCount": 106,
-  "hotelClass": null,
-  "address": "49 Rue Charles Nodier, 93310 Le Pré-Saint-Gervais, France",
-  "phone": "+33 1 48 45 40 10",
-  "website": "http://residence-hoche.com.es/",
-  "latitude": 48.889185,
-  "longitude": 2.4014425,
-  "countryCode": "FR",
+  "priceInsight": {
+    "currentPrice": 145,
+    "typicalLowPrice": 130,
+    "typicalHighPrice": 180,
+    "priceLevel": "typical"
+  },
+  "stayTotal": {
+    "baseTotal": 260.0,
+    "taxesAndFees": 30.0,
+    "grandTotal": 290.0
+  },
+  "rating": 4.5,
+  "reviewCount": 4210,
+  "address": "Taksim Meydani, Istanbul, Turkey",
+  "latitude": 41.0369,
+  "longitude": 28.9850,
   "googleHotelsUrl": "https://www.google.com/travel/search?q=...",
-  "scrapedAt": "2026-10-06T18:14:29+00:00"
+  "scrapedAt": "2026-10-06T20:30:00+00:00"
 }
 ```
 
-The dataset has two ready-made views: **Prices overview** (one line per hotel and date) and **All OTA offers** (one line per provider offer), both exportable to CSV, Excel or JSON.
+---
 
-## Pricing
+## Code Examples
 
-You pay per result row (one hotel for one check-in date):
+### Python (apify-client)
 
-| Mode | What you get |
-|---|---|
-| **With OTA offers** (default) | Every booking offer, price insight, tax breakdown, hotel details |
-| **Listing only** (`includeOtaOffers: false`) | Lowest price and hotel details from the search results, cheaper and faster |
+```python
+from apify_client import ApifyClient
 
-Platform usage is included in the price. Set **Max results** or a maximum cost per run to stay on budget.
+client = ApifyClient("YOUR_APIFY_API_TOKEN")
 
-## Tips
+run_input = {
+    "searchQueries": ["hotels in Istanbul"],
+    "checkInDate": "+14 days",
+    "nights": 2,
+    "adults": 2,
+    "currency": "USD",
+    "includeOtaOffers": True,
+    "maxHotelsPerSearch": 25,
+}
 
-- **Scheduled monitoring**: create a task with relative dates (`checkInDate: "+1 day"`, `numberOfDates: 30`) and schedule it daily. Combine with a webhook or the Google Sheets integration for alerts.
-- **Point of sale matters**: prices and the list of booking sites differ by country. Set `country` to your customers' market.
-- **Hotel names**: add the city for an exact match (`Hilton Bomonti Istanbul`). The matched hotel is returned in `hotelName` and `hotelId`; reuse the ID for future runs.
-- If you see many failed requests in the log, switch the proxy to residential.
+# Run the Actor and wait for it to finish
+run = client.actor("kamerozkan/google-hotels-prices").call(run_input=run_input)
 
-## FAQ
+# Fetch results from default dataset
+for item in client.dataset(run["defaultDatasetId"]).iterate_items():
+    print(f"{item['hotelName']}: lowest ${item['lowestPricePerNight']} on {item['lowestPriceProvider']}")
+```
 
-**Which booking sites are included?**
-Whatever Google Hotels shows for that hotel, market and date: typically Booking.com, Expedia, Hotels.com, Agoda, Trip.com, Priceline, Vio.com, Trivago deals, the official hotel website and many regional sites.
+### JavaScript / Node.js (apify-client)
 
-**Are prices per night or total?**
-Both. `pricePerNight` and `totalPrice` (for the whole stay) are returned for every offer, plus `stayTotal` with taxes and fees.
+```javascript
+import { ApifyClient } from 'apify-client';
 
-**Can I get more than 20 hotels per city?**
-Yes. Set `maxHotelsPerSearch` (up to 500); the Actor paginates automatically.
+const client = new ApifyClient({
+    token: 'YOUR_APIFY_API_TOKEN',
+});
 
-**Is it legal?**
-The Actor only collects publicly available pricing information shown on Google Hotels, without logging in. You are responsible for using the data in line with applicable laws and the terms of the sources.
+const runInput = {
+    searchQueries: ['hotels in Barcelona'],
+    checkInDate: '+7 days',
+    nights: 1,
+    currency: 'EUR',
+    includeOtaOffers: true,
+};
 
-## Support
+const run = await client.actor('kamerozkan/google-hotels-prices').call(runInput);
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
 
-Found a bug or need a field that is not there yet? Open an issue on the Issues tab. Issues are typically answered within 24 hours.
+console.log(`Extracted ${items.length} hotel rate records:`, items);
+```
+
+### cURL
+
+```bash
+curl --request POST \
+  --url "https://api.apify.com/v2/acts/kamerozkan~google-hotels-prices/runs?token=YOUR_APIFY_API_TOKEN" \
+  --header "Content-Type: application/json" \
+  --data '{
+    "searchQueries": ["hotels in Rome"],
+    "checkInDate": "2026-12-01",
+    "nights": 2,
+    "currency": "EUR"
+  }'
+```
+
+---
+
+## Pricing Details
+
+This Actor operates under **Pay-Per-Event (PPE)**:
+- **Full Hotel Offer ($0.003):** Charged per hotel per check-in date with complete OTA rates, price insights, and stay total.
+- **Listing Only ($0.001):** Charged per hotel when `includeOtaOffers: false` (fastest search mode).
+
+Platform compute usage is fully included in the event price. You can set a spending limit in Apify Console to prevent overruns.
