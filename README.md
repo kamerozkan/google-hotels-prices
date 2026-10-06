@@ -197,3 +197,11 @@ This Actor operates under **Pay-Per-Event (PPE)**:
 - **Listing Only ($0.001):** Charged per hotel when `includeOtaOffers: false` (fastest search mode).
 
 Platform compute usage is fully included in the event price. You can set a spending limit in Apify Console to prevent overruns.
+
+---
+
+## Related Apify Intelligence & Scraping Tools
+
+- [Google Ads Transparency Center Scraper & Spy API](https://apify.com/kamerozkan/google-ads-transparency-scraper) - Track competitor ad copy, creatives, formats, and active dates.
+- [Google Flights Prices & Fare Tracker API](https://apify.com/kamerozkan/google-flights-prices) - Real-time flight fares, non-stop routes, and multi-airline price tracking.
+- [AI Brand Visibility & GEO Rank Tracker API](https://apify.com/kamerozkan/ai-brand-visibility-tracker) - Track brand mentions, Share of Voice (SOV), and citations across ChatGPT, Perplexity, Gemini, and Claude.
