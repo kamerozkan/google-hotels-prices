@@ -1,0 +1,13 @@
+{
+    "actorOutputSchemaVersion": 1,
+    "title": "Google Hotels Prices Output",
+    "description": "Hotel price data, nightly rates, amenities, and OTA vendor offers scraped from Google Hotels.",
+    "properties": {
+        "results": {
+            "type": "string",
+            "title": "Hotel Prices & Offers Dataset",
+            "description": "Default dataset containing hotel records and price offers.",
+            "template": "{{links.apiDefaultDatasetUrl}}/items"
+        }
+    }
+}
