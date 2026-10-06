@@ -1,0 +1,16 @@
+{
+    "actorSpecification": 1,
+    "name": "google-hotels-prices",
+    "title": "Google Hotels Prices & OTA Rate Tracker",
+    "description": "Scrape Google Hotels prices for any city or hotel list: lowest nightly rate, every OTA offer (Booking.com, Expedia, Agoda, Trip.com, official site...), price calendar across many check-in dates, typical price range and hotel details. Fast, no browser.",
+    "version": "1.0",
+    "buildTag": "latest",
+    "meta": {
+        "templateId": "python-start"
+    },
+    "input": "./input_schema.json",
+    "storages": {
+        "dataset": "./dataset_schema.json"
+    },
+    "dockerfile": "../Dockerfile"
+}

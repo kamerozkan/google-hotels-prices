@@ -1,0 +1,169 @@
+{
+    "title": "Google Hotels Prices & OTA Rate Tracker",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "searchQueries": {
+            "title": "Search queries",
+            "type": "array",
+            "description": "What you would type into Google Hotels, e.g. 'hotels in Istanbul', 'hotels near Eiffel Tower', '5 star hotels in Dubai Marina'. One row per hotel per check-in date.",
+            "editor": "stringList",
+            "prefill": [
+                "hotels in Istanbul"
+            ],
+            "sectionCaption": "What to scrape"
+        },
+        "hotels": {
+            "title": "Specific hotels",
+            "type": "array",
+            "description": "Track specific hotels (e.g. your competitive set). Accepts a hotel name with city ('Hilton Istanbul Bomonti'), a Google Hotels URL, or a Google hotel ID (starts with 'Ch...', returned in the hotelId output field).",
+            "editor": "stringList"
+        },
+        "maxHotelsPerSearch": {
+            "title": "Max hotels per search query",
+            "type": "integer",
+            "description": "How many hotels to collect for each search query and date (Google returns ~20 per page; the Actor paginates automatically).",
+            "default": 20,
+            "minimum": 1,
+            "maximum": 500
+        },
+        "checkInDate": {
+            "title": "Check-in date",
+            "type": "string",
+            "description": "First check-in date. Absolute (2026-12-20) or relative (+14 days, 2 weeks, tomorrow). Relative dates are ideal for scheduled runs.",
+            "editor": "datepicker",
+            "dateType": "absoluteOrRelative",
+            "default": "+14 days",
+            "sectionCaption": "Dates & guests"
+        },
+        "nights": {
+            "title": "Nights (length of stay)",
+            "type": "integer",
+            "description": "Length of stay for every check-in date.",
+            "default": 1,
+            "minimum": 1,
+            "maximum": 30
+        },
+        "numberOfDates": {
+            "title": "Number of check-in dates (price calendar)",
+            "type": "integer",
+            "description": "Scrape prices for this many check-in dates starting from the check-in date. Example: 30 gives you a 30-day price calendar for every hotel.",
+            "default": 1,
+            "minimum": 1,
+            "maximum": 365
+        },
+        "dateStep": {
+            "title": "Days between check-in dates",
+            "type": "integer",
+            "description": "1 = every day, 7 = same weekday every week.",
+            "default": 1,
+            "minimum": 1,
+            "maximum": 30
+        },
+        "adults": {
+            "title": "Adults",
+            "type": "integer",
+            "description": "Number of adult guests. Prices are for one room.",
+            "default": 2,
+            "minimum": 1,
+            "maximum": 10
+        },
+        "includeOtaOffers": {
+            "title": "Include all OTA offers",
+            "type": "boolean",
+            "description": "Fetch every booking offer for each hotel (Booking.com, Expedia, Hotels.com, Agoda, Trip.com, official site...) with nightly and total prices, booking links, typical price range and tax breakdown. Turn off for a cheaper, faster run that returns only the lowest price from the search results.",
+            "default": true,
+            "sectionCaption": "Output"
+        },
+        "includeRoomTypes": {
+            "title": "Include room types",
+            "type": "boolean",
+            "description": "Adds room-level prices (e.g. 'Deluxe Double Room') from featured providers. Requires 'Include all OTA offers'.",
+            "default": false
+        },
+        "currency": {
+            "title": "Currency",
+            "type": "string",
+            "description": "Currency for all prices.",
+            "editor": "select",
+            "default": "USD",
+            "enum": [
+                "USD",
+                "EUR",
+                "GBP",
+                "TRY",
+                "AED",
+                "SAR",
+                "AUD",
+                "CAD",
+                "CHF",
+                "JPY",
+                "CNY",
+                "INR",
+                "BRL",
+                "MXN",
+                "SEK",
+                "NOK",
+                "DKK",
+                "PLN",
+                "CZK",
+                "HUF",
+                "ZAR",
+                "SGD",
+                "HKD",
+                "KRW",
+                "THB",
+                "IDR",
+                "MYR",
+                "NZD",
+                "ILS",
+                "EGP",
+                "QAR",
+                "KWD"
+            ],
+            "sectionCaption": "Localization"
+        },
+        "country": {
+            "title": "Country (point of sale)",
+            "type": "string",
+            "description": "Two-letter country code Google uses as the point of sale (us, gb, de, tr...). Prices and the list of booking sites can differ by country.",
+            "default": "us",
+            "editor": "textfield"
+        },
+        "language": {
+            "title": "Language",
+            "type": "string",
+            "description": "Language for hotel descriptions and room names, e.g. en-US, de, tr, fr.",
+            "default": "en-US",
+            "editor": "textfield"
+        },
+        "maxItems": {
+            "title": "Max results (0 = unlimited)",
+            "type": "integer",
+            "description": "Stop after this many rows. Useful to cap costs.",
+            "default": 0,
+            "minimum": 0,
+            "sectionCaption": "Advanced"
+        },
+        "maxConcurrency": {
+            "title": "Max concurrency",
+            "type": "integer",
+            "description": "Parallel requests to Google. Higher is faster; lower it if you see many retries.",
+            "default": 5,
+            "minimum": 1,
+            "maximum": 20
+        },
+        "proxyConfiguration": {
+            "title": "Proxy configuration",
+            "type": "object",
+            "description": "Datacenter proxies work in most cases. Switch to residential if you see many failed requests.",
+            "editor": "proxy",
+            "default": {
+                "useApifyProxy": true
+            },
+            "prefill": {
+                "useApifyProxy": true
+            }
+        }
+    }
+}

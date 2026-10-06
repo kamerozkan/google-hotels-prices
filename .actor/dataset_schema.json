@@ -1,0 +1,49 @@
+{
+    "actorSpecification": 1,
+    "views": {
+        "overview": {
+            "title": "Prices overview",
+            "transformation": {
+                "fields": ["thumbnailUrl", "hotelName", "checkIn", "checkOut", "lowestPricePerNight", "lowestTotalPrice", "currency", "lowestPriceProvider", "offersCount", "priceInsight", "rating", "reviewCount", "hotelClass", "searchQuery", "googleHotelsUrl"]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "thumbnailUrl": { "label": "Photo", "format": "image" },
+                    "hotelName": { "label": "Hotel", "format": "text" },
+                    "checkIn": { "label": "Check-in", "format": "text" },
+                    "checkOut": { "label": "Check-out", "format": "text" },
+                    "lowestPricePerNight": { "label": "Lowest / night", "format": "number" },
+                    "lowestTotalPrice": { "label": "Lowest total", "format": "number" },
+                    "currency": { "label": "Currency", "format": "text" },
+                    "lowestPriceProvider": { "label": "Cheapest on", "format": "text" },
+                    "offersCount": { "label": "Offers", "format": "number" },
+                    "priceInsight": { "label": "Price vs typical", "format": "object" },
+                    "rating": { "label": "Rating", "format": "number" },
+                    "reviewCount": { "label": "Reviews", "format": "number" },
+                    "hotelClass": { "label": "Stars", "format": "number" },
+                    "searchQuery": { "label": "Query", "format": "text" },
+                    "googleHotelsUrl": { "label": "Google Hotels", "format": "link" }
+                }
+            }
+        },
+        "offers": {
+            "title": "All OTA offers",
+            "transformation": {
+                "fields": ["hotelName", "checkIn", "offers"],
+                "unwind": ["offers"]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "hotelName": { "label": "Hotel", "format": "text" },
+                    "checkIn": { "label": "Check-in", "format": "text" },
+                    "provider": { "label": "Provider", "format": "text" },
+                    "pricePerNight": { "label": "Per night", "format": "number" },
+                    "totalPrice": { "label": "Total", "format": "number" },
+                    "bookingUrl": { "label": "Book", "format": "link" }
+                }
+            }
+        }
+    }
+}
